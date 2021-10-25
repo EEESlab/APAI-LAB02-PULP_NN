@@ -1,5 +1,5 @@
 /*
- * data_allocation_8_32_8.h
+ * data_allocation_8_8_8.h
  * Nazareno Bruschi <nazareno.bruschi@unibo.it>
  *
  * Copyright (C) 2019-2020 University of Bologna
@@ -20,12 +20,12 @@
 #ifndef __PULPNN_TEST_DATA_ALLOCATION__
 #define __PULPNN_TEST_DATA_ALLOCATION__
 
-#define DIM_IM_IN_X 8
-#define DIM_IM_IN_Y 8
-#define CH_IM_IN 16
-#define DIM_IM_OUT_X 8
-#define DIM_IM_OUT_Y 8
-#define CH_IM_OUT 16
+#define DIM_IM_IN_X 16
+#define DIM_IM_IN_Y 16
+#define CH_IM_IN 32
+#define DIM_IM_OUT_X 16
+#define DIM_IM_OUT_Y 16
+#define CH_IM_OUT 64
 #define DIM_KERNEL_X 3
 #define DIM_KERNEL_Y 3
 #define PADDING_Y_TOP 1
@@ -36,13 +36,15 @@
 #define STRIDE_Y 1
 
 
+PI_L2 uint8_t IN_INT8_L2[(DIM_IM_IN_X * DIM_IM_IN_Y * CH_IM_IN)] = IN_INT8;
+PI_L2 int8_t WEIGHT_INT8_L2[(DIM_KERNEL_X * DIM_KERNEL_Y * CH_IM_IN * CH_IM_OUT)] = WEIGHT_INT8;
+PI_L2 uint8_t OUT_L2[(DIM_IM_OUT_X * DIM_IM_OUT_Y * CH_IM_OUT)];
+PI_L2 uint8_t OUT_INT8_L2[(DIM_IM_OUT_X * DIM_IM_OUT_Y * CH_IM_OUT)] = OUT_INT8;    // golden sample to check result
 
-PI_L2 uint8_t IN_INT8_L2[(CH_IM_IN * DIM_IM_IN_X * DIM_IM_IN_Y)] = IN_INT8;
-PI_L1 uint8_t IN_INT8_L1[(CH_IM_IN * DIM_IM_IN_X * DIM_IM_IN_Y)];
-PI_L2 int8_t WEIGHT_INT8_L2[(CH_IM_IN * DIM_IM_IN_X * DIM_IM_IN_Y * CH_IM_OUT)] = WEIGHT_INT8;
-PI_L1 int8_t WEIGHT_INT8_L1[(CH_IM_IN * DIM_IM_IN_X * DIM_IM_IN_Y * CH_IM_OUT)];
-PI_L2 int32_t OUT_L2[CH_IM_OUT] = OUT_INT32;
-PI_L1 int32_t OUT_L1[CH_IM_OUT];
+PI_L1 uint8_t IN_INT8_L1[(DIM_IM_IN_X * DIM_IM_IN_Y * CH_IM_IN)];
+PI_L1 uint8_t OUT_L1[(DIM_IM_OUT_X * DIM_IM_OUT_Y * CH_IM_OUT)];
+PI_L1 int8_t WEIGHT_INT8_L1[(DIM_KERNEL_X * DIM_KERNEL_Y * CH_IM_IN * CH_IM_OUT)];
+PI_L1 uint8_t IM2COL_L1[((CH_IM_IN * DIM_KERNEL_X * DIM_KERNEL_Y) << 1) * NUM_CORES];
 PI_L1 int8_t BIAS_L1[CH_IM_OUT] = {0};
 
 
