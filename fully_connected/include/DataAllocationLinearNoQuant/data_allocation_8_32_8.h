@@ -35,8 +35,7 @@
 #define STRIDE_X 1
 #define STRIDE_Y 1
 
-PI_L1 int32_t *KAPPA_L1 = NULL;
-PI_L1 int32_t *LAMBDA_L1 = NULL;
+
 
 PI_L2 uint8_t IN_INT8_L2[(CH_IM_IN * DIM_IM_IN_X * DIM_IM_IN_Y)] = IN_INT8;
 PI_L1 uint8_t IN_INT8_L1[(CH_IM_IN * DIM_IM_IN_X * DIM_IM_IN_Y)];

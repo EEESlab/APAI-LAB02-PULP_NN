@@ -1,8 +1,9 @@
 /*
  * test.c
  * Nazareno Bruschi <nazareno.bruschi@unibo.it>
+ * Manuele Rusci <manuele.rusci@unibo.it>
  *
- * Copyright (C) 2019-2020 University of Bologna
+ * Copyright (C) 2019-2021 University of Bologna
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
