@@ -1,4 +1,3 @@
-
 #include "pmsis.h"
 
 #define STACK_SIZE      1024

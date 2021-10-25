@@ -1,7 +1,7 @@
 #include "pmsis.h"
 #include "perf.h"
 
-#define N 8
+#define N 80
 #define M 12
 #define K 4
 
@@ -28,25 +28,45 @@ void cluster_fn() {
   fill_matrix(B, K, M, mat_b_val);
   fill_matrix(C, N, M, 0);
 
-  // init performance counters
-  INIT_STATS();
+  // // init performance counters
+  // INIT_STATS();
+  //
+  // // executing the code multiple times to perform average statistics
+  // ENTER_STATS_LOOP();
+  //
+  // // start measuring
+  // START_STATS();
 
-  // executing the code multiple times to perform average statistics
-  ENTER_STATS_LOOP();
+  uint32_t instr_cnt, cycles_cnt;
 
-  // start measuring
-  START_STATS();
+  pi_perf_conf(
+      1 << PI_PERF_CYCLES |
+      1 << PI_PERF_INSTR
+  );
+
+  pi_perf_stop(); // stop the performance counters
+  pi_perf_reset();
+  pi_perf_start();
 
   // task to profile
   gemm(A, B, C, N, M, K);
 
-  // stop measuring
-  STOP_STATS();
+  pi_perf_stop(); // stop the performance counters
 
-  // end of the performance statistics loop
-  EXIT_STATS_LOOP();
+  instr_cnt = pi_perf_read(PI_PERF_INSTR);
+  cycles_cnt = pi_perf_read(PI_PERF_CYCLES);
 
-  /* RESULTS CHECKSUM */
+  printf("Number of Instructions: %d\nClock Cycles: %d\n",
+      instr_cnt, cycles_cnt);
+
+
+  // // stop measuring
+  // STOP_STATS();
+  //
+  // // end of the performance statistics loop
+  // EXIT_STATS_LOOP();
+  //
+  // /* RESULTS CHECKSUM */
 
 
 }

@@ -6,9 +6,11 @@ void gemm(int * MatA, int * MatB, int* MatC, int NN, int MM, int KK){
     uint32_t i, core_id, i_chunk, i_start, i_end;
 
     core_id = pi_core_id();
-    i_chunk = NN / NUM_CORES;
+    i_chunk = (NN + NUM_CORES-1) / NUM_CORES;
     i_start = core_id * i_chunk;
-    i_end   = i_start + i_chunk;
+    i_end   = i_start + i_chunk < NN? i_start + i_chunk : NN;
+
+    // printf("CHUNK: %d START: %d END: %d\n", i_chunk, i_start, i_end);
 
     // task to profile
     for (i = i_start; i < i_end; i += i_chunk) {
@@ -20,4 +22,6 @@ void gemm(int * MatA, int * MatB, int* MatC, int NN, int MM, int KK){
         MatC[i*MM+j] = acc;
       }//j
     }//i
+    pi_cl_team_barrier();
+
 }

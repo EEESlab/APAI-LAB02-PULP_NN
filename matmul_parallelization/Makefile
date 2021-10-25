@@ -5,7 +5,7 @@ APP = matrixMul
 APP_SRCS = main.c cluster.c matmuls.c
 
 # NUMBER OF USED CLUSTER CORES
-CORES ?= 1
+CORES ?= 8
 
 # PERFORMANCE COUNTERS
 APP_CFLAGS += -DPERF
