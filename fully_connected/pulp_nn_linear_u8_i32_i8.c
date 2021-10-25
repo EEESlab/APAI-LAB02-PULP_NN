@@ -58,7 +58,8 @@ void pulp_nn_linear_u8_i32_i8(
     int8_t *pB = pWeight + (i * dim_vec); // pB points to weight tensor
 
     // compute the vectorized dot products
-    for (int j=0; j<(dim_vec >> 2); j++) {
+    for (int j=0; j<(dim_vec >> 2); j++) 
+    {
       vecA = *((v4u*)pA);
       vecB = *((v4s*)pB);
       sum = SumDotp4(vecA, vecB, sum);
@@ -77,6 +78,9 @@ void pulp_nn_linear_u8_i32_i8(
       sum += inA * inB;
       col_cnt--;
     }
+    
+    // activation could be applied here
+    // else write the accumulator to the output tensor as below
     *pOut = sum;
     pOut++;
   }

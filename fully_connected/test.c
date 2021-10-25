@@ -28,7 +28,7 @@
 #include "DataAllocationLinearNoQuant/data_allocation_8_32_8.h"
 
 
-
+// function prototype
 void test();
 void pulp_parallel();
 
@@ -55,8 +55,11 @@ void test()
     {
       WEIGHT_INT8_L1[i] = WEIGHT_INT8_L2[i];
     }
+    
+    printf("\n\nGoing to run the fully-connected layer!\n");
   }
   pi_cl_team_barrier(0);
+
 
   // setup and start performance counters
   pi_perf_conf(1<<PI_PERF_CYCLES);          
@@ -82,10 +85,10 @@ void test()
   float perf_MAC =  (float)MACs/perf_cyc;
   if (cid == 0)
   {
-    printf("\n[%d] : num_cycles: %d\n",cid,perf_cyc); 
+    printf("Fully-connected layer completed!\nRuntime statistics on %d cores:\n", NUM_CORES);
+    printf("[%d] : num_cycles: %d\n",cid,perf_cyc); 
     printf("[%d] : MACs: %d\n",cid,MACs ); 
     printf("[%d] : MAC/cycle: %f\n",cid,perf_MAC ); 
-    printf("[%d] : n. of Cores: %d\n",cid,NUM_CORES); 
   }
   pi_cl_team_barrier(0);
 
@@ -113,17 +116,21 @@ int main()
   struct pi_device cluster_dev = {0};
   struct pi_cluster_conf conf;
   struct pi_cluster_task cluster_task = {0};
+
   // task parameters allocation
   pi_cluster_task(&cluster_task, pulp_parallel, NULL);
   cluster_task.stack_size = 1024;
   cluster_task.slave_stack_size = 1024;
+
   // First open the cluster
   pi_cluster_conf_init(&conf);
   pi_open_from_conf(&cluster_dev, &conf);
   if (pi_cluster_open(&cluster_dev))
     return -1;
+
   // Then offload an entry point, this will get executed on the cluster controller
   pi_cluster_send_task_to_cl(&cluster_dev, &cluster_task);
+
   // closing of the cluster
   pi_cluster_close(&cluster_dev);
 
