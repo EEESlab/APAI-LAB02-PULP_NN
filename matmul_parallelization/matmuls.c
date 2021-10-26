@@ -3,17 +3,16 @@
 
 // generic matrix multiplication
 void gemm(int * MatA, int * MatB, int* MatC, int NN, int MM, int KK){
-    uint32_t i, core_id, i_chunk, i_start, i_end;
+    uint32_t core_id, i_chunk, i_start, i_end;
+    uint32_t i = 0;
 
     core_id = pi_core_id();
     i_chunk = (NN + NUM_CORES-1) / NUM_CORES;
     i_start = core_id * i_chunk;
-    i_end   = i_start + i_chunk < NN? i_start + i_chunk : NN;
-
-    // printf("CHUNK: %d START: %d END: %d\n", i_chunk, i_start, i_end);
-
+    i_end   = i_start + i_chunk < NN ? i_start + i_chunk : NN;
+    
     // task to profile
-    for (i = i_start; i < i_end; i += i_chunk) {
+    for (i = i_start; i < i_end; i ++) {
       for (int j = 0; j < MM; j++) {
         int acc = 0;
         for (int k = 0; k < KK; k++) {
