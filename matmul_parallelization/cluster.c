@@ -56,7 +56,7 @@ void cluster_fn() {
   pi_perf_start();
 
   // task to profile
-  gemm_unroll_1x4(A, B, C, N, M, K);
+  gemm(A, B, C, N, M, K);
 
   pi_perf_stop(); // stop the performance counters
 
