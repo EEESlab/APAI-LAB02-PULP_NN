@@ -46,12 +46,6 @@ void test()
   // core 0 copies data from L2 to L1
   if(pi_core_id()==0)
   {
-#ifdef PERFORMANCE
-#ifdef VERBOSE_PERF
-    printf("MACs=%d\n", DIM_KERNEL_X * DIM_KERNEL_Y * CH_IM_IN * DIM_IM_OUT_X * DIM_IM_OUT_Y * CH_IM_OUT);
-#endif /* VERBOSE */
-#endif /* PERFORMANCE */
-
     for(int i=0; i<(DIM_IM_IN_X * DIM_IM_IN_Y * CH_IM_IN); i++)
     {
       IN_INT8_L1[i] = IN_INT8_L2[i];
@@ -66,7 +60,7 @@ void test()
   pi_cl_team_barrier(0);
 
   // configure perf counters
-  pi_perf_conf(1<<PI_PERF_CYCLES);          
+  pi_perf_conf(1<<PI_PERF_CYCLES | 1<<PI_PERF_INSTR);          
   pi_perf_reset();                      
   pi_perf_stop();                       
   pi_perf_start(); 
@@ -98,12 +92,14 @@ void test()
   pi_perf_stop();          
   int cid = pi_core_id();   
   int perf_cyc =  pi_perf_read(PI_PERF_CYCLES);
+  int perf_inst =  pi_perf_read(PI_PERF_INSTR);
   int MACs = DIM_KERNEL_X * DIM_KERNEL_Y * CH_IM_IN * DIM_IM_OUT_X * DIM_IM_OUT_Y * CH_IM_OUT;
   float perf_MAC =  (float)MACs/perf_cyc;
   if (cid == 0)
   {
     printf("Convolution completed, running on %d cores\n", NUM_CORES);
     printf("\n[%d] : num_cycles: %d\n",cid,perf_cyc); 
+    printf("[%d] : num_instr: %d\n",cid,perf_inst); 
     printf("[%d] : MACs: %d\n",cid,MACs ); 
     printf("[%d] : MAC/cycle: %f\n",cid,perf_MAC ); 
   }

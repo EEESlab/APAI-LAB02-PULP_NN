@@ -63,7 +63,7 @@ void test()
 
 
   // setup and start performance counters
-  pi_perf_conf(1<<PI_PERF_CYCLES |1<<PI_PERF_INSTR);          
+  pi_perf_conf(1<<PI_PERF_CYCLES | 1<<PI_PERF_INSTR);          
   pi_perf_reset();                      
   pi_perf_stop();                       
   pi_perf_start(); 
