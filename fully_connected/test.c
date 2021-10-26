@@ -47,12 +47,12 @@ void test()
   // copy inputs and weights from L2 to L1
   if(pi_core_id()==0)
   {
-    for(int i=0; i<(DIM_IM_IN_X * DIM_IM_IN_Y * CH_IM_IN); i++)
+    for(int i=0; i<(CH_IM_IN); i++)
     {
       IN_INT8_L1[i] = IN_INT8_L2[i];
     }
 
-    for(int i=0; i<(DIM_IM_IN_X * DIM_IM_IN_Y * CH_IM_IN * CH_IM_OUT); i++)
+    for(int i=0; i<(CH_IM_IN * CH_IM_OUT); i++)
     {
       WEIGHT_INT8_L1[i] = WEIGHT_INT8_L2[i];
     }
@@ -63,7 +63,7 @@ void test()
 
 
   // setup and start performance counters
-  pi_perf_conf(1<<PI_PERF_CYCLES);          
+  pi_perf_conf(1<<PI_PERF_CYCLES |1<<PI_PERF_INSTR);          
   pi_perf_reset();                      
   pi_perf_stop();                       
   pi_perf_start(); 
@@ -74,7 +74,7 @@ void test()
     BIAS_L1,
     OUT_L1,
     WEIGHT_INT8_L1,
-    DIM_IM_IN_X*DIM_IM_IN_Y*CH_IM_IN,
+    CH_IM_IN,
     CH_IM_OUT
   );
 
@@ -82,12 +82,14 @@ void test()
   pi_perf_stop();          
   int cid = pi_core_id();   
   int perf_cyc =  pi_perf_read(PI_PERF_CYCLES);
-  int MACs = CH_IM_IN * DIM_IM_IN_X * DIM_IM_IN_Y * CH_IM_OUT;
+  int perf_ins =  pi_perf_read(PI_PERF_INSTR);
+  int MACs = CH_IM_IN * CH_IM_OUT;
   float perf_MAC =  (float)MACs/perf_cyc;
   if (cid == 0)
   {
     printf("Fully-connected layer completed!\nRuntime statistics on %d cores:\n", NUM_CORES);
     printf("[%d] : num_cycles: %d\n",cid,perf_cyc); 
+    printf("[%d] : num_inst: %d\n",cid,perf_ins);
     printf("[%d] : MACs: %d\n",cid,MACs ); 
     printf("[%d] : MAC/cycle: %f\n",cid,perf_MAC ); 
   }

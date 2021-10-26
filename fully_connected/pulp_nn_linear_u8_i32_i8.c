@@ -38,9 +38,6 @@ void pulp_nn_linear_u8_i32_i8(
   int start = min(chunk * core_id, num_o_neurons);
   int stop = min(start + chunk, num_o_neurons);
 
-  v4u vecA;
-  v4s vecB;
-
   // every core make a copy and increase the output address
   pOut = (int32_t *) pOut + start;
 
@@ -58,27 +55,15 @@ void pulp_nn_linear_u8_i32_i8(
     int8_t *pB = pWeight + (i * dim_vec); // pB points to weight tensor
 
     // compute the vectorized dot products
-    for (int j=0; j<(dim_vec >> 2); j++) 
-    {
-      vecA = *((v4u*)pA);
-      vecB = *((v4s*)pB);
-      sum = SumDotp4(vecA, vecB, sum);
-      pA+=4;
-      pB+=4;
-    }
-
-    // left over: handling the remaining input features 
-    uint16_t col_cnt = dim_vec & 0x3;
-    while (col_cnt)
+    for (int j=0; j<dim_vec; j++) 
     {
       uint8_t inA = *pA;
       pA++;
       int8_t inB = *pB;
       pB++;
       sum += inA * inB;
-      col_cnt--;
     }
-    
+
     // activation could be applied here
     // else write the accumulator to the output tensor as below
     *pOut = sum;
