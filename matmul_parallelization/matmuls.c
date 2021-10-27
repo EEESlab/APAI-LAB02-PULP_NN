@@ -24,7 +24,7 @@ void gemm(int * MatA, int * MatB, int* MatC, int NN, int MM, int KK){
     pi_cl_team_barrier();
 
 }
-
+/*
 // matrix multiplication with loop unrolling 1x4
 void gemm_unroll_1x4(int * MatA, int * MatB, int* MatC, int NN, int MM, int KK){
 
@@ -41,3 +41,4 @@ void gemm_unroll_1x4(int * MatA, int * MatB, int* MatC, int NN, int MM, int KK){
   pi_cl_team_barrier();
 
 }
+*/

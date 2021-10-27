@@ -1,5 +1,4 @@
 #include "pmsis.h"
-#include "perf.h"
 
 #define N 80
 #define M 16
@@ -60,13 +59,19 @@ void cluster_fn() {
 
   pi_perf_stop(); // stop the performance counters
 
-  instr_cnt = pi_perf_read(PI_PERF_INSTR);
-  cycles_cnt = pi_perf_read(PI_PERF_CYCLES);
+  if (pi_core_id()==0){
 
-  printf("Number of Instructions: %d\nClock Cycles: %d\n",
-      instr_cnt, cycles_cnt);
+    instr_cnt = pi_perf_read(PI_PERF_INSTR);
+    cycles_cnt = pi_perf_read(PI_PERF_CYCLES);
+
+    printf("Number of Instructions: %d\nClock Cycles: %d | %d cores execution\n",
+        instr_cnt, cycles_cnt, NUM_CORES);
+  }
+
+  pi_cl_team_barrier(0);
 
   /* RESULTS CHECKSUM */
-  checksum(C, mat_a_val, mat_b_val, N, M, K);
+  if (pi_core_id()==0)
+    checksum(C, mat_a_val, mat_b_val, N, M, K);
 
 }
