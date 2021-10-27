@@ -1,4 +1,4 @@
-Parallelized Matrix multiplication
+#Parallelized Matrix multiplication
 
 To execute on a single core:
 $ make clean all run CORES=1

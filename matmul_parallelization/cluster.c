@@ -11,6 +11,8 @@ PI_L1 int C[N*M];
 
 void gemm(int * MatA, int * MatB, int* MatC, int NN, int MM, int KK);
 
+void gemm_unroll_1x4(int * MatA, int * MatB, int* MatC, int NN, int MM, int KK);
+
 void fill_matrix(int * Mat, int height, int width, int val){
     for (int i=0; i<height*width; i++)
     {
@@ -30,6 +32,7 @@ void checksum(int * MatA, int a_val, int b_val, int NN, int MM, int KK){
   }
 }
 
+
 void cluster_fn() {
 
   // INIT MATRICES, e.g. with the same value each cell
@@ -40,23 +43,28 @@ void cluster_fn() {
   fill_matrix(B, K, M, mat_b_val);
   fill_matrix(C, N, M, 0);
 
-  // init performance counters
-  INIT_STATS();
+  // define other variables
+  uint32_t instr_cnt,cycles_cnt;
 
-  // executing the code multiple times to perform average statistics
-  ENTER_STATS_LOOP();
+  pi_perf_conf(
+      1 << PI_PERF_CYCLES |
+      1 << PI_PERF_INSTR
+  );
 
-  // start measuring
-  START_STATS();
+  pi_perf_stop(); // stop the performance counters
+  pi_perf_reset();
+  pi_perf_start();
 
   // task to profile
   gemm(A, B, C, N, M, K);
 
-  // stop measuring
-  STOP_STATS();
+  pi_perf_stop(); // stop the performance counters
 
-  // end of the performance statistics loop
-  EXIT_STATS_LOOP();
+  instr_cnt = pi_perf_read(PI_PERF_INSTR);
+  cycles_cnt = pi_perf_read(PI_PERF_CYCLES);
+
+  printf("Number of Instructions: %d\nClock Cycles: %d\n",
+      instr_cnt, cycles_cnt);
 
   /* RESULTS CHECKSUM */
   checksum(C, mat_a_val, mat_b_val, N, M, K);
